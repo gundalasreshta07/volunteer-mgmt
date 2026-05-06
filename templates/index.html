@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-2xl p-8 md:p-12 mb-8">
+    <h1 class="text-3xl md:text-4xl font-bold mb-3">Connect. Volunteer. Impact.</h1>
+    <p class="text-emerald-50 mb-6 max-w-2xl">Join local NGO drives, contribute your skills, and build measurable social impact.</p>
+    <a href="{{ url_for('auth.register') }}" class="inline-block bg-white text-emerald-700 font-semibold px-6 py-3 rounded-lg hover:bg-emerald-50">
+        Register
+    </a>
+</section>
+
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+    <div class="bg-white rounded-xl border border-gray-200 p-5">
+        <p class="text-sm text-gray-500">Total Volunteers</p>
+        <p class="text-3xl font-bold mt-1">{{ total_volunteers }}</p>
+    </div>
+    <div class="bg-white rounded-xl border border-gray-200 p-5">
+        <p class="text-sm text-gray-500">Drives Completed</p>
+        <p class="text-3xl font-bold mt-1">{{ total_drives }}</p>
+    </div>
+    <div class="bg-white rounded-xl border border-gray-200 p-5">
+        <p class="text-sm text-gray-500">Hours Contributed</p>
+        <p class="text-3xl font-bold mt-1">{{ total_hours or 0 }}</p>
+    </div>
+    <div class="bg-white rounded-xl border border-gray-200 p-5">
+        <p class="text-sm text-gray-500">NGOs</p>
+        <p class="text-3xl font-bold mt-1">{{ total_ngos }}</p>
+    </div>
+</section>
+
+<section>
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-bold">Upcoming Drives</h2>
+        <a href="{{ url_for('drives.list_drives') }}" class="text-emerald-700 font-medium hover:underline">View all</a>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {% for drive in upcoming_drives %}
+            <div class="bg-white rounded-xl border border-gray-200 p-5">
+                <h3 class="font-semibold text-lg mb-2">{{ drive.title }}</h3>
+                <p class="text-sm text-gray-600 mb-1">{{ drive.ngo_name }}{% if drive.city_name %} · {{ drive.city_name }}{% endif %}</p>
+                <p class="text-sm text-gray-600 mb-4">{{ drive.drive_date.strftime('%d %b %Y') if drive.drive_date else '' }}</p>
+                <a href="{{ url_for('drives.drive_detail', drive_id=drive.drive_id) }}" class="inline-block text-emerald-700 font-medium hover:underline">
+                    View Details
+                </a>
+            </div>
+        {% else %}
+            <p class="text-gray-600">No upcoming drives right now.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

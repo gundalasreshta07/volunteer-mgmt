@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto bg-white border border-gray-200 rounded-2xl p-6">
+    <h1 class="text-2xl font-bold mb-4">Create New Drive</h1>
+    <form method="POST" action="{{ url_for('admin.create_drive') }}" class="space-y-4">
+        <div>
+            <label class="block text-sm font-medium mb-1">Title</label>
+            <input type="text" name="title" required class="w-full border border-gray-300 rounded-lg px-3 py-2">
+        </div>
+        <div>
+            <label class="block text-sm font-medium mb-1">Description</label>
+            <textarea name="description" rows="4" class="w-full border border-gray-300 rounded-lg px-3 py-2"></textarea>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium mb-1">Date</label>
+                <input type="date" name="drive_date" required class="w-full border border-gray-300 rounded-lg px-3 py-2">
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1">Location</label>
+                <input type="text" name="location" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+            </div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-medium mb-1">City</label>
+                <select name="city_id" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                    <option value="">Select city</option>
+                    {% for city in cities %}
+                        <option value="{{ city.city_id }}">{{ city.name }}, {{ city.state }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1">Max Volunteers</label>
+                <input type="number" name="max_volunteers" min="1" value="50" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+            </div>
+        </div>
+        <button type="submit" class="bg-emerald-600 text-white font-semibold px-5 py-2.5 rounded-lg hover:bg-emerald-700">
+            Create Drive
+        </button>
+    </form>
+</div>
+{% endblock %}

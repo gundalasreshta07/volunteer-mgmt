@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">Browse Upcoming Drives</h1>
+
+<form method="GET" action="{{ url_for('drives.list_drives') }}" class="bg-white border border-gray-200 rounded-xl p-4 mb-6 grid grid-cols-1 md:grid-cols-3 gap-3">
+    <select name="city_id" class="border border-gray-300 rounded-lg px-3 py-2">
+        <option value="">All Cities</option>
+        {% for city in cities %}
+            <option value="{{ city.city_id }}" {% if selected_city == city.city_id %}selected{% endif %}>{{ city.name }}</option>
+        {% endfor %}
+    </select>
+    <select name="ngo_id" class="border border-gray-300 rounded-lg px-3 py-2">
+        <option value="">All NGOs</option>
+        {% for ngo in ngos %}
+            <option value="{{ ngo.ngo_id }}" {% if selected_ngo == ngo.ngo_id %}selected{% endif %}>{{ ngo.name }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="bg-emerald-600 text-white font-semibold rounded-lg px-4 py-2 hover:bg-emerald-700">
+        Search
+    </button>
+</form>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {% for drive in drives %}
+        <div class="bg-white border border-gray-200 rounded-xl p-5">
+            <h2 class="text-lg font-bold mb-1">{{ drive.title }}</h2>
+            <p class="text-sm text-gray-600 mb-1">{{ drive.ngo_name }} · {{ drive.city_name or 'N/A' }}</p>
+            <p class="text-sm text-gray-600 mb-3">{{ drive.drive_date.strftime('%d %b %Y') if drive.drive_date else '' }}</p>
+
+            {% set progress = ((drive.current_registrations / drive.max_volunteers) * 100) if drive.max_volunteers else 0 %}
+            <div class="mb-1 flex items-center justify-between text-xs text-gray-600">
+                <span>Capacity</span>
+                <span>{{ drive.current_registrations }}/{{ drive.max_volunteers }}</span>
+            </div>
+            <div class="h-2 bg-gray-200 rounded-full mb-3">
+                <div class="h-2 rounded-full bg-emerald-500" style="width: {{ progress if progress <= 100 else 100 }}%"></div>
+            </div>
+
+            <span class="inline-block text-xs font-semibold px-2 py-1 rounded-full mb-4
+                {% if drive.status == 'upcoming' %}bg-green-100 text-green-700{% else %}bg-gray-200 text-gray-700{% endif %}">
+                {{ drive.status|capitalize }}
+            </span>
+
+            <div>
+                <a href="{{ url_for('drives.drive_detail', drive_id=drive.drive_id) }}" class="inline-block bg-emerald-600 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-emerald-700">
+                    View Details
+                </a>
+            </div>
+        </div>
+    {% else %}
+        <p class="text-gray-600">No drives found for selected filters.</p>
+    {% endfor %}
+</div>
+{% endblock %}

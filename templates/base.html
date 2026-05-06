@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VolunteerHub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+    <nav class="bg-white border-b border-gray-200">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+            <a href="{{ url_for('index') }}" class="text-xl font-bold text-emerald-600">VolunteerHub</a>
+            <div class="flex items-center gap-5 text-sm font-medium">
+                <a href="{{ url_for('index') }}" class="hover:text-emerald-600">Home</a>
+                <a href="{{ url_for('drives.list_drives') }}" class="hover:text-emerald-600">Browse Drives</a>
+                {% if session.get('user_type') == 'volunteer' %}
+                    <a href="{{ url_for('volunteer.dashboard') }}" class="hover:text-emerald-600">My Dashboard</a>
+                    <a href="{{ url_for('auth.logout') }}" class="hover:text-emerald-600">Logout</a>
+                {% elif session.get('user_type') == 'coordinator' %}
+                    <a href="{{ url_for('admin.dashboard') }}" class="hover:text-emerald-600">Admin Panel</a>
+                    <a href="{{ url_for('auth.logout') }}" class="hover:text-emerald-600">Logout</a>
+                {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="hover:text-emerald-600">Login</a>
+                    <a href="{{ url_for('auth.register') }}" class="hover:text-emerald-600">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-6xl mx-auto px-4 pt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="space-y-2">
+                    {% for category, message in messages %}
+                        <div class="rounded-lg px-4 py-3 text-sm font-medium
+                            {% if category == 'success' %}bg-green-100 text-green-800 border border-green-200
+                            {% else %}bg-red-100 text-red-800 border border-red-200{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

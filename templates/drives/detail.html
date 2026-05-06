@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-3xl font-bold mb-6">{{ drive.title }}</h1>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-6">
+        <h2 class="text-lg font-semibold mb-2">About this drive</h2>
+        <p class="text-gray-700 mb-6">{{ drive.description or 'No description available.' }}</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div class="bg-gray-50 rounded-lg p-4">
+                <p class="text-gray-500">Date</p>
+                <p class="font-semibold">{{ drive.drive_date.strftime('%d %b %Y') if drive.drive_date else 'TBD' }}</p>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-4">
+                <p class="text-gray-500">Location</p>
+                <p class="font-semibold">{{ drive.location or 'TBD' }}</p>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-4">
+                <p class="text-gray-500">NGO</p>
+                <p class="font-semibold">{{ drive.ngo_name }}</p>
+            </div>
+            <div class="bg-gray-50 rounded-lg p-4">
+                <p class="text-gray-500">Coordinator</p>
+                <p class="font-semibold">{{ drive.coordinator_name or 'Not assigned' }}</p>
+            </div>
+        </div>
+
+        <h3 class="text-lg font-semibold mt-8 mb-2">NGO Mission</h3>
+        <p class="text-gray-700">{{ drive.ngo_mission or 'Mission not available.' }}</p>
+    </div>
+
+    <div>
+        <div class="lg:sticky lg:top-6 bg-white border border-gray-200 rounded-xl p-5">
+            <p class="text-sm text-gray-500 mb-1">Spots left</p>
+            <p class="text-2xl font-bold mb-4">{{ spots_left }}</p>
+
+            {% if is_registered %}
+                <div class="bg-green-100 text-green-700 border border-green-200 rounded-lg px-3 py-2 text-sm font-medium mb-3">
+                    You're registered!
+                </div>
+            {% endif %}
+
+            {% if drive.status == 'completed' %}
+                <div class="bg-gray-100 text-gray-700 border border-gray-200 rounded-lg px-3 py-2 text-sm font-medium">
+                    Drive completed
+                </div>
+            {% else %}
+                <form method="POST" action="{{ url_for('drives.register_drive', drive_id=drive.drive_id) }}">
+                    <button
+                        type="submit"
+                        class="w-full py-2.5 rounded-lg font-semibold text-white
+                            {% if spots_left <= 0 or is_registered %}bg-gray-400 cursor-not-allowed{% else %}bg-emerald-600 hover:bg-emerald-700{% endif %}"
+                        {% if spots_left <= 0 or is_registered %}disabled{% endif %}
+                    >
+                        RSVP for this Drive
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

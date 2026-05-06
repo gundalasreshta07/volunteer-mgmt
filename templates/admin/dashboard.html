@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="bg-white border border-gray-200 rounded-2xl p-6 mb-6">
+    <h1 class="text-2xl font-bold">{{ ngo.name }}</h1>
+    <p class="text-gray-600 mt-1">{{ ngo.mission }}</p>
+    <a href="{{ url_for('admin.create_drive') }}" class="inline-block mt-4 bg-emerald-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-emerald-700">
+        Create New Drive
+    </a>
+</section>
+
+<section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+    <div class="bg-white border border-gray-200 rounded-xl p-4">
+        <p class="text-sm text-gray-500">Current Month Drives</p>
+        <p class="text-3xl font-bold">{{ month_totals.total_drives }}</p>
+    </div>
+    <div class="bg-white border border-gray-200 rounded-xl p-4">
+        <p class="text-sm text-gray-500">Current Month Volunteers</p>
+        <p class="text-3xl font-bold">{{ month_totals.total_volunteers }}</p>
+    </div>
+    <div class="bg-white border border-gray-200 rounded-xl p-4">
+        <p class="text-sm text-gray-500">Current Month Hours</p>
+        <p class="text-3xl font-bold">{{ month_totals.total_hours }}</p>
+    </div>
+</section>
+
+<section class="bg-white border border-gray-200 rounded-2xl p-6 mb-8">
+    <h2 class="text-xl font-bold mb-3">All Drives</h2>
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="text-left text-gray-500 border-b">
+                    <th class="py-2">Title</th>
+                    <th class="py-2">Date</th>
+                    <th class="py-2">Registered</th>
+                    <th class="py-2">Attended</th>
+                    <th class="py-2">Status</th>
+                    <th class="py-2">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for d in drives %}
+                    <tr class="border-b">
+                        <td class="py-2">{{ d.title }}</td>
+                        <td class="py-2">{{ d.drive_date }}</td>
+                        <td class="py-2">{{ d.registered_count }}</td>
+                        <td class="py-2">{{ d.attended_count }}</td>
+                        <td class="py-2">{{ d.status }}</td>
+                        <td class="py-2 flex gap-2">
+                            <form method="POST" action="{{ url_for('admin.complete_drive', drive_id=d.drive_id) }}">
+                                <button type="submit" class="text-xs bg-gray-800 text-white px-2 py-1 rounded hover:bg-gray-900">
+                                    Mark Complete
+                                </button>
+                            </form>
+                            <a href="{{ url_for('admin.manage_attendance', drive_id=d.drive_id) }}" class="text-xs bg-emerald-600 text-white px-2 py-1 rounded hover:bg-emerald-700">
+                                Manage Attendance
+                            </a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="6" class="py-3 text-gray-600">No drives created yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="bg-white border border-gray-200 rounded-2xl p-6 mb-8">
+    <h2 class="text-xl font-bold mb-3">Monthly Impact Report</h2>
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="text-left text-gray-500 border-b">
+                    <th class="py-2">Drive</th>
+                    <th class="py-2">Date</th>
+                    <th class="py-2">Volunteers Attended</th>
+                    <th class="py-2">Total Hours</th>
+                    <th class="py-2">Avg Hours</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in impact_report %}
+                    <tr class="border-b">
+                        <td class="py-2">{{ row.drive_name }}</td>
+                        <td class="py-2">{{ row.drive_date }}</td>
+                        <td class="py-2">{{ row.volunteers_attended or 0 }}</td>
+                        <td class="py-2">{{ row.total_hours_contributed or 0 }}</td>
+                        <td class="py-2">{{ row.avg_hours_per_volunteer or 0 }}</td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="5" class="py-3 text-gray-600">No impact data for this month.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="bg-white border border-gray-200 rounded-2xl p-6">
+    <h2 class="text-xl font-bold mb-3">Top Volunteers</h2>
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="text-left text-gray-500 border-b">
+                    <th class="py-2">Name</th>
+                    <th class="py-2">Email</th>
+                    <th class="py-2">Drives Attended</th>
+                    <th class="py-2">Total Hours</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for v in top_volunteers %}
+                    <tr class="border-b">
+                        <td class="py-2">{{ v.name }}</td>
+                        <td class="py-2">{{ v.email }}</td>
+                        <td class="py-2">{{ v.drives_attended }}</td>
+                        <td class="py-2">{{ v.total_hours }}</td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="4" class="py-3 text-gray-600">No volunteer activity yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
